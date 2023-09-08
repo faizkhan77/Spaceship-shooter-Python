@@ -96,6 +96,17 @@ def handle_bullets_hitting_ship(left_bullets, right_bullets, black, white):
         elif bullet.x > WIDTH:
             left_bullets.remove(bullet)
             
+def bullet_fire(right_bullets, left_bullets, black, white, event):
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_x and len(left_bullets) < MAX_BULLET:
+            bullet = pygame.Rect(black.x + black.width, black.y + black.height//2-2, 10, 5)
+            left_bullets.append(bullet)
+            BULLET_FIRE_SOUND.play()
+        elif event.key == pygame.K_SPACE and len(right_bullets) < MAX_BULLET:
+            bullet = pygame.Rect(white.x, white.y + white.height//2-2, 10, 5)
+            right_bullets.append(bullet)
+            BULLET_FIRE_SOUND.play()
+        
 def draw_winner(text):
     draw_text = WINNER_FONT.render(text, 1, WHITE)
     WIN.blit(draw_text, (WIDTH//2 - draw_text.get_width()//2, HEIGHT//2 - draw_text.get_height()//2))
@@ -125,15 +136,8 @@ def main():
                 if event.key == pygame.K_ESCAPE:
                     run = False
                     pygame.quit()
-                elif event.key == pygame.K_x and len(left_bullets) < MAX_BULLET:
-                    bullet = pygame.Rect(black.x + black.width, black.y + black.height//2-2, 10, 5)
-                    left_bullets.append(bullet)
-                    BULLET_FIRE_SOUND.play()
-                elif event.key == pygame.K_SPACE and len(right_bullets) < MAX_BULLET:
-                    bullet = pygame.Rect(white.x, white.y + white.height//2-2, 10, 5)
-                    right_bullets.append(bullet)
-                    BULLET_FIRE_SOUND.play()
-                    
+
+
                     
             elif event.type == right_ship_hit:
                 leftship_health -= 1
@@ -141,7 +145,8 @@ def main():
             elif event.type == left_ship_hit:
                 rightship_health -= 1
                 BULLET_HIT_SOUND.play()
-                
+            bullet_fire(right_bullets, left_bullets, black, white, event)
+            
                 
         winner_txt = ""
         if leftship_health <= 0:
@@ -157,6 +162,7 @@ def main():
         keys_pressed = pygame.key.get_pressed()
         whiteship_movement(keys_pressed, white)
         blackship_movement(keys_pressed, black)
+        
             
         handle_bullets_hitting_ship(left_bullets, right_bullets, black, white)
             
